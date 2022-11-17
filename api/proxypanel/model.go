@@ -64,21 +64,24 @@ type NodeOnline struct {
 }
 
 type VMessUser struct {
-	UID        int    `json:"uid"`
-	VmessUID   string `json:"vmess_uid"`
-	SpeedLimit uint64 `json:"speed_limit"`
+	UID         int    `json:"uid"`
+	VmessUID    string `json:"vmess_uid"`
+	SpeedLimit  uint64 `json:"speed_limit"`
+	ClientLimit int    `json:"client_limit"`
 }
 
 type TrojanUser struct {
-	UID        int    `json:"uid"`
-	Password   string `json:"password"`
-	SpeedLimit uint64 `json:"speed_limit"`
+	UID         int    `json:"uid"`
+	Password    string `json:"password"`
+	SpeedLimit  uint64 `json:"speed_limit"`
+	ClientLimit int    `json:"client_limit"`
 }
 
 type SSUser struct {
-	UID        int    `json:"uid"`
-	Password   string `json:"passwd"`
-	SpeedLimit uint64 `json:"speed_limit"`
+	UID         int    `json:"uid"`
+	Password    string `json:"passwd"`
+	SpeedLimit  uint64 `json:"speed_limit"`
+	ClientLimit int    `json:"client_limit"`
 }
 
 type UserTraffic struct {

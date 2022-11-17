@@ -3,6 +3,7 @@ package limiter
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/XrayR-project/XrayR/api"
@@ -86,7 +87,21 @@ func (l *Limiter) DeleteInboundLimiter(tag string) error {
 	l.InboundInfo.Delete(tag)
 	return nil
 }
+func (l *Limiter) removeDuplication_map(arr []api.OnlineUser) []api.OnlineUser {
+	set := make(map[api.OnlineUser]struct{}, len(arr))
+	j := 0
+	for _, v := range arr {
+		_, ok := set[v]
+		if ok {
+			continue
+		}
+		set[v] = struct{}{}
+		arr[j] = v
+		j++
+	}
 
+	return arr[:j]
+}
 func (l *Limiter) GetOnlineDevice(tag string) (*[]api.OnlineUser, error) {
 	onlineUser := make([]api.OnlineUser, 0)
 	if value, ok := l.InboundInfo.Load(tag); ok {
@@ -99,15 +114,42 @@ func (l *Limiter) GetOnlineDevice(tag string) (*[]api.OnlineUser, error) {
 			}
 			return true
 		})
+
 		inboundInfo.UserOnlineIP.Range(func(key, value interface{}) bool {
 			ipMap := value.(*sync.Map)
+			// If this ip is a new device
+			email := key.(string)
+			var deviceLimit int = 0
+			var uid int = 0
+			var ips []string
+			ips = make([]string, 0)
+			if v, ok := inboundInfo.UserInfo.Load(email); ok {
+				u := v.(UserInfo)
+				uid = u.UID
+				deviceLimit = u.DeviceLimit
+				fmt.Print(fmt.Sprintf("onlineUser email %s ,deviceLimit: %d  \n", email, deviceLimit))
+			}
+
 			ipMap.Range(func(key, value interface{}) bool {
+				//ip := key.(string)
+				uid_t := value.(int)
+				//counter := 0
 				ip := key.(string)
-				uid := value.(int)
-				onlineUser = append(onlineUser, api.OnlineUser{UID: uid, IP: ip})
+				if uid == uid_t {
+					ips = append(ips, ip)
+				}
+				//if counter > deviceLimit && deviceLimit > 0 {
+				//	ipMap.Delete(ip)
+				//	onlineUser = append(onlineUser, api.OnlineUser{UID: uid, IP: ip})
+				//
+				//	fmt.Print(fmt.Sprintf("onlineUser inbound in limiter: %d --uid %d -- ip %s \n", len(onlineUser), uid, ip))
+				//}
+
 				return true
 			})
-			email := key.(string)
+			retips := strings.Join(ips, ",")
+			onlineUser = append(onlineUser, api.OnlineUser{UID: uid, IP: retips})
+			fmt.Print(fmt.Sprintf("onlineUser inbound in limiter: %d --uid %d -- ip %s \n", len(onlineUser), uid, retips))
 			inboundInfo.UserOnlineIP.Delete(email) // Reset online device
 			return true
 		})

@@ -10,10 +10,10 @@ import (
 
 func CreateClient() api.API {
 	apiConfig := &api.Config{
-		APIHost:  "http://127.0.0.1:8888",
-		Key:      "naBDpLvREiwY9qPr",
-		NodeID:   1,
-		NodeType: "V2ray",
+		APIHost:  "https://user.naiyout.buzz",
+		Key:      "ZG5xfSnHvMD4pqMD",
+		NodeID:   72,
+		NodeType: "Trojan",
 	}
 	client := proxypanel.New(apiConfig)
 	return client

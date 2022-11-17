@@ -258,7 +258,7 @@ func (c *APIClient) ReportNodeStatus(nodeStatus *api.NodeStatus) (err error) {
 	return nil
 }
 
-//ReportNodeOnlineUsers reports online user ip
+// ReportNodeOnlineUsers reports online user ip
 func (c *APIClient) ReportNodeOnlineUsers(onlineUserList *[]api.OnlineUser) error {
 
 	var path string
@@ -541,7 +541,7 @@ func (c *APIClient) ParseV2rayUserListResponse(userInfoResponse *json.RawMessage
 			UID:         user.UID,
 			Email:       "",
 			UUID:        user.VmessUID,
-			DeviceLimit: c.DeviceLimit,
+			DeviceLimit: user.ClientLimit,
 			SpeedLimit:  speedlimit,
 		}
 	}
@@ -569,7 +569,7 @@ func (c *APIClient) ParseTrojanUserListResponse(userInfoResponse *json.RawMessag
 			UID:         user.UID,
 			Email:       "",
 			UUID:        user.Password,
-			DeviceLimit: c.DeviceLimit,
+			DeviceLimit: user.ClientLimit,
 			SpeedLimit:  speedlimit,
 		}
 	}
@@ -597,7 +597,7 @@ func (c *APIClient) ParseSSUserListResponse(userInfoResponse *json.RawMessage) (
 			UID:         user.UID,
 			Email:       "",
 			Passwd:      user.Password,
-			DeviceLimit: c.DeviceLimit,
+			DeviceLimit: user.ClientLimit,
 			SpeedLimit:  speedlimit,
 		}
 	}
